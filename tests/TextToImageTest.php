@@ -32,7 +32,7 @@ class TextToImageTest extends PHPUnit_Framework_TestCase
 
     public function test_break_text()
     {
-        $origin = <<<EOF
+        $origin = <<<'EOF'
 朋友買了一件衣料，綠色的底子帶白色方格，當她拿給我們看時，一位對圍棋十分感與趣的同學說：
 「啊，好像棋盤似的。」
 「我看倒有點像稿紙。」我說。
@@ -47,7 +47,7 @@ class TextToImageTest extends PHPUnit_Framework_TestCase
 如果他能從這扇門望見日出的美景，你又何必要他走向那扇窗去聆聽鳥鳴呢？你聽你的鳥鳴，他看他的日出，彼此都會有等量的美的感受。人與人偶有摩擦，往往都是由於缺乏那分雅量的緣故；因此，為了減少摩擦，增進和諧，我們必須努力培養雅量。
 EOF;
 
-        $except = <<<EOF
+        $except = <<<'EOF'
 朋友買了一件衣料，綠色的底子帶白色方格，當她拿給
 我們看時，一位對圍棋十分感與趣的同學說：
 「啊，好像棋盤似的。」
