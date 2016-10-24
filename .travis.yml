@@ -7,9 +7,9 @@ php:
   - 7.0
   - 7.1
 
-#addons:
-#  code_climate:
-#    repo_token: 81463871ea72c9fdbdb67bc3ea36138a1ddb8e441213f1f3e4de98a63e2dc362
+addons:
+  code_climate:
+    repo_token: 517f7d26afe34874aeb35e2c8ce9019be268d1cd67ce30604abaf4058679668e
 
 notifications:
   email: false
