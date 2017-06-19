@@ -3,6 +3,7 @@
 namespace FacebookAnonymousPublisher\TextToImage;
 
 use Intervention\Image\AbstractFont;
+use Intervention\Image\Image;
 use Intervention\Image\ImageManager;
 use Mexitek\PHPColors\Color;
 
@@ -18,9 +19,9 @@ class TextToImage
     /**
      * Canvas font file path.
      *
-     * @var null|string
+     * @var string
      */
-    protected $fontPath = null;
+    protected $fontPath;
 
     /**
      * Constructor.
@@ -32,7 +33,7 @@ class TextToImage
     {
         $this->image = new ImageManager;
 
-        $this->fontPath = $fontPath;
+        $this->fontPath = $fontPath ?: __DIR__.'/fonts/NotoSansCJKtc-Regular.otf';
 
         $this->color = $color;
     }
@@ -41,30 +42,35 @@ class TextToImage
      * Create a text image.
      *
      * @param string $text
+     * @param bool $multiple
      *
-     * @return \Intervention\Image\Image
+     * @return Image|Image[]
      */
-    public function make($text)
+    public function make($text, $multiple = false)
     {
-        if (is_null($this->fontPath)) {
-            throw new \InvalidArgumentException('Font file path is not set.');
+        $texts = explode(PHP_EOL, $this->breakText($text));
+
+        $texts = $multiple ? array_chunk($texts, 20) : [$texts];
+
+        $images = [];
+
+        foreach ($texts as $text) {
+            $text = trim(implode(PHP_EOL, $text));
+
+            $dimensions = $this->getDimensions($text);
+
+            $images[] = $this->image
+                ->canvas($dimensions['width'], $dimensions['height'], "#{$this->color}")
+                ->text($text, $dimensions['width'] / 2, $dimensions['height'] / 2, function (AbstractFont $font) {
+                    $font->file($this->fontPath)
+                        ->size(48)
+                        ->color((new Color($this->color))->isDark() ? '#fff' : '#000')
+                        ->align('center')
+                        ->valign('middle');
+                });
         }
 
-        $text = $this->breakText($text);
-
-        $dimensions = $this->calculateDimensions($text);
-
-        return $this->image
-            ->canvas($dimensions['width'], $dimensions['height'], "#{$this->color}")
-            ->text($text, $dimensions['width'] / 2, $dimensions['height'] / 2, function (AbstractFont $font) {
-                $color = new Color($this->color);
-
-                $font->file($this->fontPath);
-                $font->size(48);
-                $font->color($color->isDark() ? '#fff' : '#000');
-                $font->align('center');
-                $font->valign('middle');
-            });
+        return $multiple ? $images : $images[0];
     }
 
     /**
@@ -74,7 +80,7 @@ class TextToImage
      *
      * @return array
      */
-    protected function calculateDimensions($text)
+    protected function getDimensions($text)
     {
         $box = imagettfbbox(38, 0, $this->fontPath, $text);
 
@@ -123,7 +129,6 @@ class TextToImage
             }
 
             $temp .= $word;
-
             $width += mb_strwidth($word);
         }
 
