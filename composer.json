@@ -25,5 +25,10 @@
     "psr-4": {
       "FacebookAnonymousPublisher\\TextToImage\\": "src/"
     }
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "sort-packages": true
   }
 }
